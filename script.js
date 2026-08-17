@@ -10,8 +10,7 @@ const kontaktListe = document.getElementById('kontakt-liste');
 form.addEventListener('submit', function(e) { 
 e.preventDefault(); 
 kontaktHinzufuegen(); 
-});
-
+}); 
 // Funktion zum Hinzufügen eines Kontakts 
 function kontaktHinzufuegen() { 
 const neuerKontakt = { 
@@ -30,10 +29,22 @@ nameInput.value = '';
 emailInput.value = ''; 
 telefonInput.value = ''; 
 } 
-// Funktion zur Anzeige aller Kontakte 
-function kontakteAnzeigen() { 
+// NEUE FUNKTION: Kontakte filtern 
+function kontakteFiltern(suchbegriff) { 
+if (!suchbegriff) { 
+return kontakte; 
+} 
+return kontakte.filter(kontakt =>  
+kontakt.name.toLowerCase().includes(suchbegriff.toLowerCase()) || 
+kontakt.email.toLowerCase().includes(suchbegriff.toLowerCase()) 
+); 
+} 
+// Funktion zur Anzeige aller Kontakte (erweitert für Filter) 
+function kontakteAnzeigen(suchbegriff = '') { 
 kontaktListe.innerHTML = ''; 
-kontakte.forEach(function(kontakt) { 
+// Filter anwenden falls Suchbegriff vorhanden 
+const gefilterteKontakte = kontakteFiltern(suchbegriff); 
+gefilterteKontakte.forEach(function(kontakt) { 
 const kontaktDiv = document.createElement('div'); 
 kontaktDiv.className = 'kontakt-item'; 
 kontaktDiv.innerHTML = ` 
@@ -44,10 +55,13 @@ kontaktDiv.innerHTML = `
 `; 
 kontaktListe.appendChild(kontaktDiv); 
 }); 
+// Anzeige wenn keine Kontakte gefunden 
+if (gefilterteKontakte.length === 0) { 
+kontaktListe.innerHTML = '<p>Keine Kontakte gefunden.</p>'; 
+} 
 } 
 // Funktion zum Löschen eines Kontakts 
 function kontaktLoeschen(id) { 
 kontakte = kontakte.filter(kontakt => kontakt.id !== id); 
 kontakteAnzeigen(); 
-} 
-
+}
